@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>HİSTOGRAM EŞİTLEME</title>
+    <!-- OpenCV.js kütüphanesini ekleme -->
+    <script async src="https://docs.opencv.org/master/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+</head>
+
+<body>
+    <!-- Resim seçme düğmesi -->
+    <input type="file" onchange="loadImage(event)">
+    <!-- Resim altinda yazacak baslik bilgim -->
+    <center><b><p>ANTAKYA LIWAN HOTEL &#x2764;</p></b></center>
+    <!-- Canvas elementi ile hem orjinal hem de griye cevrilmis resmimin konumu ayarlama-->
+    <div style="display:flex; justify-content:center; margin-top:10px;">
+        <canvas id="original" style="display:block; margin-right:10px;"></canvas>
+        <canvas id="grayscale" style="display:block;"></canvas>
+    </div>
+
+    <!--burda javascript kulllanilacagini belirtme-->
+    <script type="text/javascript">
+        //İlk fonksiyon ile canvas elemanlarını tanimlamasini sonrada bu elemanlar icin cizim alani olusturma
+        let originalCanvas = document.getElementById("original");
+        let grayScaleCanvas = document.getElementById("grayscale");
+        let originalCtx = originalCanvas.getContext("2d");
+        let grayScaleCtx = grayScaleCanvas.getContext("2d");
+
+        //
+        function loadImage(event) {
+            let img = new Image(); //yeni image dosyası olusturma
+            img.onload = function() { //resim yüklendiginde olacaklari tanimladigimiz fonk.
+                //hem orjnal hem de gri olan resmin genislik ve uzunlugunu yüklenen resiminkine atama 
+                originalCanvas.width = img.width;
+                originalCanvas.height = img.height;
+                grayScaleCanvas.width = img.width;
+                grayScaleCanvas.height = img.height;
+                originalCtx.drawImage(img, 0, 0); // orijinal resmin img koordinatlarını (0,0) noktasından itibaren belirtilen canvas üzerinde çizilmesi
+                let imageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
+                //burda ise letdata icinde tum piksel verileri depolama
+                let data = imageData.data;
+                //siyah beyaz yapma piksel hesaplaması yapılarak tabi.RGB degerlerine göre
+                for (let i = 0; i < data.length; i += 4) {
+                    let gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    data[i] = gray;
+                    data[i + 1] = gray;
+                    data[i + 2] = gray;
+                }
+                grayScaleCtx.putImageData(imageData, 0, 0); //siyah beyaz resimi yazdırma icin
+            };
+            img.src = URL.createObjectURL(event.target.files[0]); //sectitigimiz resim yuklendigi anda Url'si olusur.Ve img.src icine atama
+        }
+    </script>
+</body>
+
+</html>

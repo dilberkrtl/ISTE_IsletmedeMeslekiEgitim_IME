@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>OpenCV.js Example</title>
+    <!-- OpenCV.js kütüphanesini ekleyin -->
+    <script async src="https://docs.opencv.org/master/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+</head>
+
+<body>
+    <!-- Resim seçme düğmesi -->
+    <input type="file" onchange="loadImage(event)" style="display:block;"><br>
+    <!-- Canvas elementi -->
+    <canvas id="canvas" style="display:block; width:500px; height:650px; margin:auto;"></canvas>
+    <!-- Resim altinda yazacak baslik bilgim -->
+    <center><b><p>ANTAKYA LIWAN HOTEL &#x2764;</p></b></center>
+
+    <!-- JavaScript kodları -->
+    <script type="text/javascript">
+        // Resim dosyasını yükleyen fonksiyon
+        function loadImage(event) {
+            // Yükleme işlemi tamamlanınca çalışacak fonksiyon
+            let img = new Image();
+            img.onload = function() {
+                    // Canvas boyutunu ve resmin konumunu ayarlama
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    // Resmi canvas üzerinde görüntüleme
+                    const x = canvas.width / 2 - img.width / 2;
+                    const y = canvas.height / 2 - img.height / 2;
+                    ctx.drawImage(img, x, y);
+                    // Griye dönüştürme işlemi
+                    grayScale();
+                }
+                // Resim dosyasını yükleme
+            img.src = URL.createObjectURL(event.target.files[0]);
+        }
+        // Griye dönüştürme işlemini yapan fonksiyon
+        function grayScale() {
+            // Canvas üzerindeki resmi gri hale getirme
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                let gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                data[i] = gray;
+                data[i + 1] = gray;
+                data[i + 2] = gray;
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+    </script>
+</body>
+
+</html>
